@@ -1,4 +1,4 @@
-# WHITELIST & BLOCKS ONLY INTERACTIONS
+# Whitelist & Blocks Only Interactions
 
 * Version message has a "relay" bool.
 
@@ -8,7 +8,7 @@
   this node wants inv messages and tx messages announcing new transactions.
 
 
-# original blocks only test
+### original blocks only test
 
 * node is started up in `-blocksonly` mode.
 * node.getnetworkinfo()['localrelay'] is False.
@@ -28,7 +28,7 @@
 * conn1 sends txn via P2P
 * confirm 2nd connection gets the transaction
 
-# blocksonly mode
+### blocksonly mode
 
 * `-blocksonly` help text: Whether to reject transactions from network peers. Automatic
   broadcast and rebroadcast of any transactions from inbound peers is disabled,
@@ -63,7 +63,7 @@
       -> node is in `-blocksonly` mode & peer isn't whitelisted
       -> OR peer is a `blockrelay` connection
 
-# whitelist
+### whitelist
 
 * `-whitebind` help text: Bind to given address and whitelist peers connecting to it.
   Allowed permissions are:
@@ -98,12 +98,12 @@
   relay."
 
 
-# interactions between blocksonly & whitelist
+### interactions between blocksonly & whitelist
 
 * if -blocksonly is set, set -whitelistrelay to false.
 * if -whitelistforcerelay is set, set -whitelistrelay to true.
 
-# P2P & RPC
+### P2P & RPC
 
 P2P: version message, relay bool
 -> set to false if node is in `blocksonly` mode, or connection type is
@@ -114,16 +114,14 @@ RPC: getnetworkinfo['localrelay']
 -> help text: true if transaction relay is requested from peers
 
 
-# questions
+### questions
 * so you send txns to whitelisted peers? but if version said its block relay
   only connection, why wouldn't they disconnect you? how do they know there's a
   whitelist overwrite going on?
 
-* if you're in blocksonly mode, do you still send out local transactions? whats the
-  difference if both indicate the same in the version message?
-
-* you accept INV txn messages from whitelisted peers even if blocksonly is
-  true. how does the rest of the lifecycle work?
+* if you're in blocksonly mode, do you still send out locally submitted
+  transactions? whats the difference if both indicate the same in the version
+  message?
 
 * trace the receiving logic. what do you do when you receive a version message
   saying block-relay-only connection?
@@ -131,17 +129,11 @@ RPC: getnetworkinfo['localrelay']
 * is there somewhere that sets the relaytxes part of version message to true if
   there's whitelist behavior going on?
 
---
+* so in blocksonly mode, if you try to submit a txn to a peer, its not just bad
+  for privacy, they disconnect you? `doc/reduce-traffic.md` doesn't mention
+  that in the `-blocksonly` section
 
-* what is the agreement of the connection if a node is started up in blocksonly
-  mode?
-
-* how is blocks-relay-only connection agreement indicated. it must be
-  different since sending a transaction would result in disconnect.
-
-* how do whitelist permissions play in with this?
-
-# scenarios
+### scenarios
 1. start a node in `blocksonly` mode. make a connection. send a transaction
    to them -> they disconnect.
 
@@ -151,7 +143,7 @@ RPC: getnetworkinfo['localrelay']
 3. start a node in `blocksonly` mode. make a connection with `-whitelistrelay`.
    send a txn -> they don't disconnect? but also don't get the txn?
 
-
+--
 
 4. start a node in `blocksonly` mode. make a connection with `-whitelistforcerelay`.
    send a txn. do they disconnect?
